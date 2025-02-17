@@ -46,11 +46,8 @@ data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].values[0]
 df_menor_consumo = df[(df["Consumo"] == menor_consumo) & (df["Data"].dt.weekday != 6)]
 data_menor_consumo = df_menor_consumo["Data"].values[0] if not df_menor_consumo.empty else "Sem dados"
 
-# Ler o consumo total do mês da célula D34
-if mes_atual:
-    consumo_mes_atual = pd.read_excel(caminho_arquivo, sheet_name=mes_atual, usecols="D", skiprows=0, nrows=1).iloc[0, 0]
-else:
-    consumo_mes_atual = 0
+# Ler o consumo total do mês da guia "Atual" célula A1
+consumo_mes_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", usecols="A", nrows=1).iloc[0, 0]
 
 # Criar layout
 st.title("Consumo de Água - Simões Filho")
