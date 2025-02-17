@@ -46,10 +46,9 @@ data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].values[0]
 df_menor_consumo = df[(df["Consumo"] == menor_consumo) & (df["Data"].dt.weekday != 6)]
 data_menor_consumo = df_menor_consumo["Data"].values[0] if not df_menor_consumo.empty else "Sem dados"
 
-# Calcular consumo do mês corretamente
+# Ler o consumo total do mês da célula D34
 if mes_atual:
-    df_mes_atual = df[df["Mês"] == mes_atual]
-    consumo_mes_atual = df_mes_atual[df_mes_atual["Consumo"] > 0]["Consumo"].sum()
+    consumo_mes_atual = pd.read_excel(caminho_arquivo, sheet_name=mes_atual, usecols="D", skiprows=33, nrows=1).iloc[0, 0]
 else:
     consumo_mes_atual = 0
 
