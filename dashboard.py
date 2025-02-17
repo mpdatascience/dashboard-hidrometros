@@ -41,12 +41,15 @@ data_ultima_leitura = df.iloc[-1]["Data"] + pd.Timedelta(days=1)
 consumo_ultima_leitura = df.iloc[-1]["Consumo"]
 
 data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].values[0]
-data_menor_consumo = df[(df["Consumo"] == menor_consumo) & (df["Data"].dt.weekday != 6)]["Data"].values[0]
 
-# Calcular consumo do mês corretamente, ignorando valores negativos
+# Calcular a data do menor consumo ignorando domingos
+df_menor_consumo = df[(df["Consumo"] == menor_consumo) & (df["Data"].dt.weekday != 6)]
+data_menor_consumo = df_menor_consumo["Data"].values[0] if not df_menor_consumo.empty else "Sem dados"
+
+# Calcular consumo do mês corretamente
 if mes_atual:
-    df_mes_atual = df[(df["Mês"] == mes_atual) & (df["Consumo"] >= 0)]
-    consumo_mes_atual = df_mes_atual["Consumo"].sum()
+    df_mes_atual = df[df["Mês"] == mes_atual]
+    consumo_mes_atual = df_mes_atual[df_mes_atual["Consumo"] > 0]["Consumo"].sum()
 else:
     consumo_mes_atual = 0
 
@@ -85,7 +88,7 @@ col1, col2, col3 = st.columns(3)
 col1.metric("Média de Consumo Diário", f"{media_consumo:.2f} m³")
 col1.metric("Dias com Consumo Zero", dias_consumo_zero)
 col1.metric("Menor Consumo", f"{menor_consumo} m³")
-col1.metric("Data do Menor Consumo", pd.to_datetime(data_menor_consumo).strftime('%d/%m/%Y'))
+col1.metric("Data do Menor Consumo", pd.to_datetime(data_menor_consumo).strftime('%d/%m/%Y') if data_menor_consumo != "Sem dados" else "Sem dados")
 
 col2.metric("Maior Consumo", f"{maior_consumo} m³")
 col2.metric("Data do Maior Consumo", pd.to_datetime(data_maior_consumo).strftime('%d/%m/%Y'))
