@@ -8,7 +8,7 @@ from datetime import datetime
 caminho_arquivo = os.path.join(os.path.dirname(__file__), "LEITURA DE HIDROMETROS.xlsx")
 
 # Lista de planilhas
-planilhas = ["Jan - 2025", "Fev - 2025","Atual"]
+planilhas = ["Jan - 2025", "Fev - 2025"]
 
 # Identificar o mês atual
 mes_atual = datetime.now().strftime("%b - %Y")
