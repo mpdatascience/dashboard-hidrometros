@@ -1,9 +1,11 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import os
 
-# Carregar dados
-caminho_arquivo = r"C:\Users\Marcos Paulo\Desktop\Docs\Data\LEITURA DE HIDROMETROS.xlsx"
+# Definir caminho do arquivo (no mesmo diretório do script)
+caminho_arquivo = os.path.join(os.path.dirname(__file__), "LEITURA DE HIDROMETROS.xlsx")
+
 
 planilhas = [
     "Jan - 2025", "Fev - 2025"
