@@ -10,6 +10,10 @@ caminho_arquivo = os.path.join(os.path.dirname(__file__), "LEITURA DE HIDROMETRO
 # Lista de planilhas a serem lidas
 planilhas = ["Jan - 2025", "Fev - 2025"]
 
+# Definir nome correto do mês atual com base nos dados disponíveis
+mes_atual = datetime.now().strftime("%b - %Y")  # Exemplo: "Fev - 2025"
+mes_atual = next((m for m in planilhas if mes_atual in m), None)  # Verifica se o mês existe na planilha
+
 # Lendo todas as planilhas e combinando os dados
 df_list = []
 for sheet in planilhas:
@@ -40,12 +44,11 @@ consumo_ultima_leitura = df.iloc[-1]["Consumo"]
 # Data do maior consumo
 data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].values[0]
 
-# Definir nome correto do mês atual com base nos dados disponíveis
-mes_atual = datetime.now().strftime("%b - %Y")  # Exemplo: "Fev - 2025"
-mes_atual = next((m for m in planilhas if mes_atual in m), None)  # Verifica se o mês existe na planilha
-
-# Calcular consumo do mês atual se encontrado
-consumo_mes_atual = df[df["Mês"] == mes_atual]["Consumo"].sum() if mes_atual else 0
+# Ler o consumo total do mês diretamente da célula D34
+if mes_atual:
+    consumo_mes_atual = pd.read_excel(caminho_arquivo, sheet_name=mes_atual, usecols="D", skiprows=33, nrows=1).iloc[0, 0]
+else:
+    consumo_mes_atual = 0
 
 # Criar layout do dashboard
 st.title("Dashboard de Consumo de Água", anchor="center")
