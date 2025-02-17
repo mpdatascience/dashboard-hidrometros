@@ -51,7 +51,7 @@ else:
     consumo_mes_atual = 0
 
 # Criar layout do dashboard
-st.title("Dashboard de Consumo de Água", anchor="center")
+st.title("Consumo de Água - Simões Filho", anchor="center")
 st.subheader("Indicadores", divider="blue")
 
 # Exibir informações principais
