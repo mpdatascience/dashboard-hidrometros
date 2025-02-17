@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 streamlit
 pandas
 plotly
 openpyxl
+=======
+streamlit
+pandas
+plotly
+openpyxl
+>>>>>>> 528dc56 (Atualizando planilha e ajustes no código)

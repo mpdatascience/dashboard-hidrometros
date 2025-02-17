@@ -4,6 +4,7 @@ import plotly.express as px
 import os
 from datetime import datetime
 
+<<<<<<< HEAD
 # Definir caminho do arquivo (no mesmo diretório do script)
 caminho_arquivo = os.path.join(os.path.dirname(__file__), "LEITURA DE HIDROMETROS.xlsx")
 
@@ -13,6 +14,11 @@ planilhas = ["Jan - 2025", "Fev - 2025"]
 # Definir nome correto do mês atual com base nos dados disponíveis
 mes_atual = datetime.now().strftime("%b - %Y")  # Exemplo: "Fev - 2025"
 mes_atual = next((m for m in planilhas if mes_atual in m), None)  # Verifica se o mês existe na planilha
+=======
+
+# Carregar dados
+caminho_arquivo = r"C:\Users\Marcos Paulo\Desktop\Docs\Data\LEITURA DE HIDROMETROS.xlsx"
+>>>>>>> 528dc56 (Atualizando planilha e ajustes no código)
 
 # Lendo todas as planilhas e combinando os dados
 df_list = []
