@@ -8,7 +8,7 @@ from datetime import datetime
 caminho_arquivo = os.path.join(os.path.dirname(__file__), "LEITURA DE HIDROMETROS.xlsx")
 
 # Lista de planilhas
-planilhas = ["Jan - 2025", "Fev - 2025, Atual"]
+planilhas = ["Jan - 2025", "Fev - 2025"]
 
 # Identificar o mês atual
 mes_atual = datetime.now().strftime("%b - %Y")
@@ -47,7 +47,16 @@ df_menor_consumo = df[(df["Consumo"] == menor_consumo) & (df["Data"].dt.weekday 
 data_menor_consumo = df_menor_consumo["Data"].values[0] if not df_menor_consumo.empty else "Sem dados"
 
 # Ler o consumo total do mês da guia "Atual" célula A1
-consumo_mes_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", usecols="A", nrows=0).iloc[0, 0]
+try:
+    xls = pd.ExcelFile(caminho_arquivo)
+    if "Atual" in xls.sheet_names:
+        df_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", usecols="A", nrows=1)
+        consumo_mes_atual = df_atual.iloc[0, 0] if not df_atual.empty and pd.notna(df_atual.iloc[0, 0]) else "Dados indisponíveis"
+    else:
+        consumo_mes_atual = "Planilha 'Atual' não encontrada"
+except Exception as e:
+    consumo_mes_atual = "Erro ao carregar"
+    print(f"Erro ao ler consumo do mês: {e}")
 
 # Criar layout
 st.title("Consumo de Água - Simões Filho")
