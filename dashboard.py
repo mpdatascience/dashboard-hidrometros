@@ -6,7 +6,6 @@ import os
 # Definir caminho do arquivo (no mesmo diretório do script)
 caminho_arquivo = os.path.join(os.path.dirname(__file__), "LEITURA DE HIDROMETROS.xlsx")
 
-
 planilhas = [
     "Jan - 2025", "Fev - 2025"
 ]
@@ -40,10 +39,14 @@ consumo_ultima_leitura = df.iloc[-1]["Consumo"]
 # Data do maior consumo
 data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].values[0]
 
+# Calcular o consumo total do mês atual
+mes_atual = pd.to_datetime("today").strftime('%b - %Y')  # Exemplo: "Fev - 2025"
+df_mes_atual = df[df["Mês"] == mes_atual]
+consumo_mes_atual = df_mes_atual["Consumo"].sum()
+
 # Criar layout do dashboard
 st.title("Dashboard de Consumo de Água", anchor="center")
 st.subheader("Indicadores", divider="blue")
-
 
 # Destacar informações principais
 st.markdown("### Informação Diária")
@@ -59,7 +62,16 @@ col1.metric("Menor Consumo", f"{menor_consumo} m³")
 col2.metric("Maior Consumo", f"{maior_consumo} m³")
 col2.metric("Data do Maior Consumo", pd.to_datetime(data_maior_consumo).strftime('%d/%m/%Y'))
 
-
+# Criar um quadro no canto superior direito com o consumo do mês
+st.markdown("### Consumo do Mês até o Momento")
+st.markdown(
+    f"""
+    <div style="background-color:#4CAF50;padding:15px;border-radius:10px;color:white;text-align:center;font-size:20px;">
+        <b>{consumo_mes_atual:.2f} m³</b>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # Criar gráfico de consumo diário com nova paleta de cores
 fig = px.line(df, x="Data", y="Consumo", color="Mês", title="Consumo Diário de Água", markers=True,
