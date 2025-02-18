@@ -50,7 +50,7 @@ data_menor_consumo = df_menor_consumo["Data"].values[0] if not df_menor_consumo.
 try:
     xls = pd.ExcelFile(caminho_arquivo)
     if "Atual" in xls.sheet_names:
-        df_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", usecols="B", nrows=1)
+        df_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", usecols="A", nrows=1)
         consumo_mes_atual = df_atual.iloc[0, 0] if not df_atual.empty and pd.notna(df_atual.iloc[0, 0]) else "Dados indisponíveis"
     else:
         consumo_mes_atual = "Planilha 'Atual' não encontrada"
@@ -59,46 +59,48 @@ except Exception as e:
     print(f"Erro ao ler consumo do mês: {e}")
 
 # Criar layout
+st.set_page_config(page_title="Dashboard Hidrometros", layout="wide")
+st.image("natura_logo.png", width=200)
 st.title("Consumo de Água - Simões Filho")
-st.subheader("Indicadores", divider="blue")
 
-# Criar três quadrados azuis para os principais indicadores
-st.markdown("""
-    <div style="display: flex; justify-content: center; gap: 20px;">
-        <div style="background-color:#007bff; padding: 15px; border-radius:10px; text-align:center; color: white; font-weight: bold;">
-            Última Leitura:<br> {} m³
-        </div>
-        <div style="background-color:#007bff; padding: 15px; border-radius:10px; text-align:center; color: white; font-weight: bold;">
-            Data da Última Leitura:<br> {}
-        </div>
-        <div style="background-color:#007bff; padding: 15px; border-radius:10px; text-align:center; color: white; font-weight: bold;">
-            Consumo dia Anterior:<br> {} m³
-        </div>
-    </div>
-    """.format(ultima_leitura, data_ultima_leitura.strftime('%d/%m/%Y'), consumo_ultima_leitura), unsafe_allow_html=True)
+st.markdown("---")
 
-# Consumo do mês
-st.markdown("### Consumo do Mês Atual")
+# Criar três indicadores estilizados
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.metric("Última Leitura", f"{ultima_leitura} m³")
+with col2:
+    st.metric("Data da Última Leitura", data_ultima_leitura.strftime('%d/%m/%Y'))
+with col3:
+    st.metric("Consumo Atual", f"{consumo_ultima_leitura} m³")
+
+st.markdown("### Consumo do Mês Atual", unsafe_allow_html=True)
 st.markdown(
     f"""
-    <div style="background-color:#4CAF50; padding:20px; border-radius:10px; text-align:center; color:white; font-size:18px;">
+    <div style="background-color:#004B8D; padding:20px; border-radius:10px; text-align:center; color:white; font-size:18px;">
         {mes_atual}: {consumo_mes_atual} m³
     </div>
     """, unsafe_allow_html=True
 )
 
-# Exibir indicadores adicionais
-st.subheader("Outros Indicadores", divider="blue")
-col1, col2, col3 = st.columns(3)
-col1.metric("Média de Consumo Diário", f"{media_consumo:.2f} m³")
-col1.metric("Dias com Consumo Zero", dias_consumo_zero)
-col1.metric("Menor Consumo", f"{menor_consumo} m³")
-col1.metric("Data do Menor Consumo", pd.to_datetime(data_menor_consumo).strftime('%d/%m/%Y') if data_menor_consumo != "Sem dados" else "Sem dados")
+st.markdown("---")
 
-col2.metric("Maior Consumo", f"{maior_consumo} m³")
-col2.metric("Data do Maior Consumo", pd.to_datetime(data_maior_consumo).strftime('%d/%m/%Y'))
+# Exibir indicadores adicionais
+st.subheader("Outros Indicadores")
+col1, col2 = st.columns(2)
+with col1:
+    st.metric("Média de Consumo Diário", f"{media_consumo:.2f} m³")
+    st.metric("Dias com Consumo Zero", dias_consumo_zero)
+    st.metric("Menor Consumo", f"{menor_consumo} m³")
+    st.metric("Data do Menor Consumo", pd.to_datetime(data_menor_consumo).strftime('%d/%m/%Y') if data_menor_consumo != "Sem dados" else "Sem dados")
+
+with col2:
+    st.metric("Maior Consumo", f"{maior_consumo} m³")
+    st.metric("Data do Maior Consumo", pd.to_datetime(data_maior_consumo).strftime('%d/%m/%Y'))
+
+st.markdown("---")
 
 # Gráfico de consumo diário
 fig = px.line(df, x="Data", y="Consumo", color="Mês", title="Consumo Diário de Água", markers=True,
-              color_discrete_sequence=["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"])
+              color_discrete_sequence=["#004B8D", "#008CBA", "#00A5CF", "#4CAF50"])
 st.plotly_chart(fig)
