@@ -61,25 +61,20 @@ except Exception as e:
 # Criar layout
 st.set_page_config(page_title="Dashboard Hidrometros", layout="wide")
 st.image("natura_logo.png", width=200)
-st.title("Consumo de Água - Simões Filho")
 
+# Alterar a estrutura para colocar o consumo atual na mesma linha
+st.title("Consumo de Água - Simões Filho")
 st.markdown("---")
 
-# Criar três indicadores estilizados
-col1, col2, col3 = st.columns(3)
+# Criar uma linha com o logo e as métricas
+col1, col2, col3, col4 = st.columns([1, 1, 1, 2])  # Aumentar o número de colunas
 with col1:
     st.metric("Última Leitura", f"{ultima_leitura} m³")
 with col2:
     st.metric("Data da Última Leitura", data_ultima_leitura.strftime('%d/%m/%Y'))
 with col3:
     st.metric("Consumo Atual", f"{consumo_ultima_leitura} m³")
-
-st.markdown("---")
-
-# Exibir o consumo do mês atual na mesma linha
-st.markdown("### Consumo do Mês Atual", unsafe_allow_html=True)
-col1, col2, col3 = st.columns([1, 1, 1])
-with col2:
+with col4:
     st.markdown(
         f"""
         <div style="background-color:#004B8D; padding:10px; border-radius:10px; text-align:center; color:white; font-size:16px; width:200px; margin:auto;">
