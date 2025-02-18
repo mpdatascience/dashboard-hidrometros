@@ -78,7 +78,7 @@ with col4:
     st.markdown(
         f"""
         <div style="background-color:#004B8D; padding:10px; border-radius:10px; text-align:center; color:white; font-size:16px; width:200px; margin:auto;">
-            {mes_atual}: {consumo_mes_atual} m³
+            {mes_atual}: ("Consumo Mês Atual:", {consumo_mes_atual}) m³
         </div>
         """, unsafe_allow_html=True
     )
