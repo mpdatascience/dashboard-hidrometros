@@ -7,8 +7,10 @@ from datetime import datetime
 # Definir caminho do arquivo
 caminho_arquivo = os.path.join(os.path.dirname(__file__), "LEITURA DE HIDROMETROS.xlsx")
 
-# Lista de planilhas
-planilhas = ["Jan - 2025", "Fev - 2025"]
+# Gerar a lista de meses do ano
+anos = [str(datetime.now().year)]  # Você pode modificar para incluir vários anos
+meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+planilhas = [f"{mes} - {ano}" for ano in anos for mes in meses]
 
 # Identificar o mês atual
 mes_atual = datetime.now().strftime("%b - %Y")
@@ -17,9 +19,12 @@ mes_atual = next((m for m in planilhas if mes_atual in m), None)
 # Carregar os dados
 df_list = []
 for sheet in planilhas:
-    temp_df = pd.read_excel(caminho_arquivo, sheet_name=sheet, header=1)
-    temp_df["Mês"] = sheet  # Adiciona a coluna do mês
-    df_list.append(temp_df)
+    try:
+        temp_df = pd.read_excel(caminho_arquivo, sheet_name=sheet, header=1)
+        temp_df["Mês"] = sheet  # Adiciona a coluna do mês
+        df_list.append(temp_df)
+    except ValueError:
+        print(f"A planilha {sheet} não foi encontrada no arquivo.")
 
 df = pd.concat(df_list, ignore_index=True)
 df.columns = ["Data", "Leitura", "Consumo", "Status", "Mês"]
@@ -82,6 +87,7 @@ with col4:
         </div>
         """, unsafe_allow_html=True
     )
+
 st.markdown("---")
 
 # Exibir indicadores adicionais
