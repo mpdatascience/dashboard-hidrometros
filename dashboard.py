@@ -101,4 +101,4 @@ with col2:
 st.markdown("---")
 
 # Gráfico de consumo diário
-fig = px.line(df, x=
+fig = px.line(df, x=)
