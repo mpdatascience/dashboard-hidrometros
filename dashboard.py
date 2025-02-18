@@ -82,7 +82,6 @@ with col4:
         </div>
         """, unsafe_allow_html=True
     )
-
 st.markdown("---")
 
 # Exibir indicadores adicionais
@@ -103,4 +102,4 @@ st.markdown("---")
 # Gráfico de consumo diário
 fig = px.line(df, x="Data", y="Consumo", color="Mês", title="Consumo Diário de Água", markers=True,
               color_discrete_sequence=["#004B8D", "#008CBA", "#00A5CF", "#4CAF50"])
-
+st.plotly_chart(fig)
