@@ -101,4 +101,6 @@ with col2:
 st.markdown("---")
 
 # Gráfico de consumo diário
-fig = px.line(df, x=)
+fig = px.line(df, x="Data", y="Consumo", color="Mês", title="Consumo Diário de Água", markers=True,
+              color_discrete_sequence=["#004B8D", "#008CBA", "#00A5CF", "#4CAF50"])
+
