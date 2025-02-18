@@ -74,7 +74,7 @@ with col2:
 with col3:
     st.metric("Consumo Atual", f"{consumo_ultima_leitura if consumo_ultima_leitura is not None else 'Sem Dados'} m³")
 with col4:
-    ("### Consumo do Mês Atual", unsafe_allow_html=True)
+    st.markdown("### Consumo do Mês Atual", unsafe_allow_html=True)
     st.markdown(
         f"""
         <div style="background-color:#004B8D; padding:10px; border-radius:10px; text-align:center; color:white; font-size:16px; width:200px; margin:auto;">
@@ -82,7 +82,6 @@ with col4:
         </div>
         """, unsafe_allow_html=True
     )
-
 
 st.markdown("---")
 
@@ -102,6 +101,4 @@ with col2:
 st.markdown("---")
 
 # Gráfico de consumo diário
-fig = px.line(df, x="Data", y="Consumo", color="Mês", title="Consumo Diário de Água", markers=True,
-              color_discrete_sequence=["#004B8D", "#008CBA", "#00A5CF", "#4CAF50"])
-st.plotly_chart(fig)
+fig = px.line(df, x=
