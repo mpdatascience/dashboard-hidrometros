@@ -49,8 +49,8 @@ data_menor_consumo = df_menor_consumo["Data"].values[0] if not df_menor_consumo.
 # Ler o consumo total do mês da guia "Atual" célula A1
 try:
     xls = pd.ExcelFile(caminho_arquivo)
-    if "Atual" in xls.sheet_names:
-        df_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", usecols="A", nrows=1)
+    if "Fev - 2025" in xls.sheet_names:
+        df_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", usecols="D", nrows=0)
         consumo_mes_atual = df_atual.iloc[0, 0] if not df_atual.empty and pd.notna(df_atual.iloc[0, 0]) else "Dados indisponíveis"
     else:
         consumo_mes_atual = "Planilha 'Atual' não encontrada"
