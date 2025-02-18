@@ -74,6 +74,7 @@ with col2:
 with col3:
     st.metric("Consumo Atual", f"{consumo_ultima_leitura if consumo_ultima_leitura is not None else 'Sem Dados'} m³")
 with col4:
+    ("### Consumo do Mês Atual", unsafe_allow_html=True)
     st.markdown(
         f"""
         <div style="background-color:#004B8D; padding:10px; border-radius:10px; text-align:center; color:white; font-size:16px; width:200px; margin:auto;">
