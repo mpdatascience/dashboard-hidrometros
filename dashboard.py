@@ -65,23 +65,28 @@ st.title("Consumo de Água - Simões Filho")
 
 st.markdown("---")
 
-# Criar uma linha com o logo e as métricas
-col1, col2, col3, col4 = st.columns([1, 1, 1, 2])  # Aumentar o número de colunas
+# Criar três indicadores estilizados
+col1, col2, col3 = st.columns(3)
 with col1:
-    st.metric("Última Leitura", f"{consumo_ultima_leitura if consumo_ultima_leitura is not None else 'Sem Dados'} m³")
+    st.metric("Última Leitura", f"{ultima_leitura} m³")
 with col2:
-    st.metric("Data da Última Leitura", f"{data_ultima_leitura.strftime('%d/%m/%Y') if data_ultima_leitura else 'Sem Dados'}")
+    st.metric("Data da Última Leitura", data_ultima_leitura.strftime('%d/%m/%Y'))
 with col3:
-    st.metric("Consumo Atual", f"{consumo_ultima_leitura if consumo_ultima_leitura is not None else 'Sem Dados'} m³")
-with col4:
+    st.metric("Consumo Atual", f"{consumo_ultima_leitura} m³")
+
+st.markdown("---")
+
+# Exibir o consumo do mês atual na mesma linha
+st.markdown("### Consumo do Mês Atual", unsafe_allow_html=True)
+col1, col2, col3 = st.columns([1, 1, 1])
+with col2:
     st.markdown(
         f"""
         <div style="background-color:#004B8D; padding:10px; border-radius:10px; text-align:center; color:white; font-size:16px; width:200px; margin:auto;">
-            {mes_atual}: {consumo_mes_atual if consumo_mes_atual is not None else 'Dados indisponíveis'} m³
+            {mes_atual}: {consumo_mes_atual} m³
         </div>
         """, unsafe_allow_html=True
     )
-
 
 st.markdown("---")
 
