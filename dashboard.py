@@ -50,7 +50,7 @@ data_menor_consumo = df_menor_consumo["Data"].values[0] if not df_menor_consumo.
 try:
     xls = pd.ExcelFile(caminho_arquivo)
     if "Atual" in xls.sheet_names:
-        df_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", usecols="B", nrows=1)
+        df_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", usecols="A", nrows=1)
         consumo_mes_atual = df_atual.iloc[0, 0] if not df_atual.empty and pd.notna(df_atual.iloc[0, 0]) else "Dados indisponíveis"
     else:
         consumo_mes_atual = "Planilha 'Atual' não encontrada"
@@ -74,14 +74,19 @@ with col2:
 with col3:
     st.metric("Consumo Atual", f"{consumo_ultima_leitura} m³")
 
+st.markdown("---")
+
+# Exibir o consumo do mês atual na mesma linha
 st.markdown("### Consumo do Mês Atual", unsafe_allow_html=True)
-st.markdown(
-    f"""
-    <div style="background-color:#004B8D; padding:20px; border-radius:10px; text-align:center; color:white; font-size:18px;">
-        {mes_atual}: {consumo_mes_atual} m³
-    </div>
-    """, unsafe_allow_html=True
-)
+col1, col2, col3 = st.columns([1, 1, 1])
+with col2:
+    st.markdown(
+        f"""
+        <div style="background-color:#004B8D; padding:10px; border-radius:10px; text-align:center; color:white; font-size:16px; width:200px; margin:auto;">
+            {mes_atual}: {consumo_mes_atual} m³
+        </div>
+        """, unsafe_allow_html=True
+    )
 
 st.markdown("---")
 
