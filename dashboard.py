@@ -57,40 +57,29 @@ df_mes2 = df[df["Mês"].str.contains(mes2)]
 dias_consumo_zero = (df["Consumo"] == 0).sum()
 maior_consumo = df["Consumo"].max()
 menor_consumo = df[df["Consumo"] > 0]["Consumo"].min()
-media_consumo = df["Consumo"].mean()
 
-ultima_leitura = df.iloc[-1]["Leitura"] if not df.empty else "Sem Dados"
-data_ultima_leitura = (df.iloc[-1]["Data"] + timedelta(days=1)).strftime('%d/%m/%Y') if not df.empty else "Sem Dados"
-consumo_atual = df.iloc[-1]["Consumo"] if not df.empty else "Sem Dados"
-
-# Consumo total do mês selecionado a partir da guia "Atual"
-try:
-    df_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", header=None)
-    consumo_total_mes = df_atual.iloc[1, 1] if not df_atual.empty else "Sem Dados"
-except Exception as e:
-    consumo_total_mes = "Sem Dados"
-
-# Para o ano de 2024, definir a última leitura de Dez-2024
+# Consumo total do ano de 2024 e média diária
 if ano_selecionado == "2024":
     try:
-        df_dez_2024 = pd.read_excel(caminho_arquivo, sheet_name="Dez - 2024", header=1)
-        ultima_leitura = df_dez_2024.iloc[-1]["Leitura"] if not df_dez_2024.empty else "Sem Dados"
-        media_consumo = df["Consumo"].mean()
+        df_cd34 = pd.read_excel(caminho_arquivo, sheet_name="Atual", header=None)
+        consumo_total_2024 = df_cd34.iloc[1, 1] if not df_cd34.empty else "Sem Dados"
+        media_diaria_2024 = consumo_total_2024 / 12 if isinstance(consumo_total_2024, (int, float)) else "Sem Dados"
     except Exception as e:
-        ultima_leitura = "Sem Dados"
+        consumo_total_2024 = "Sem Dados"
+        media_diaria_2024 = "Sem Dados"
 
-data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].values
-if len(data_maior_consumo) > 0:
-    data_maior_consumo = pd.to_datetime(data_maior_consumo[0]).strftime('%d/%m/%Y')
+    ultima_leitura = consumo_total_2024
+    data_ultima_leitura = f"{media_diaria_2024:.2f} m³" if isinstance(media_diaria_2024, (int, float)) else "Sem Dados"
 else:
-    data_maior_consumo = "Sem dados"
+    ultima_leitura = df.iloc[-1]["Leitura"] if not df.empty else "Sem Dados"
+    data_ultima_leitura = (df.iloc[-1]["Data"] + timedelta(days=1)).strftime('%d/%m/%Y') if not df.empty else "Sem Dados"
 
-df_menor_consumo = df[(df["Consumo"] == menor_consumo) & (df["Data"].dt.weekday != 6)]
-data_menor_consumo = df_menor_consumo["Data"].values
-if len(data_menor_consumo) > 0:
-    data_menor_consumo = pd.to_datetime(data_menor_consumo[0]).strftime('%d/%m/%Y')
-else:
-    data_menor_consumo = "Sem dados"
+consumo_atual = df.iloc[-1]["Consumo"] if not df.empty else "Sem Dados"
+media_consumo = df["Consumo"].mean()
+
+# Determinar o mês do menor consumo
+mes_maior_consumo = df[df["Consumo"] == maior_consumo]["Mês"].values[0] if not df[df["Consumo"] == maior_consumo].empty else "Sem dados"
+mes_menor_consumo = df[df["Consumo"] == menor_consumo]["Mês"].values[0] if not df[df["Consumo"] == menor_consumo].empty else "Sem dados"
 
 # Criar layout
 st.image("natura_logo.png", width=200)
@@ -108,9 +97,9 @@ st.markdown("---")
 # Criar uma linha com o logo e as métricas
 col1, col2, col3 = st.columns([1, 1, 1])
 with col1:
-    st.metric("Última Leitura", f"{ultima_leitura} m³")
+    st.metric("Consumo do Ano" if ano_selecionado == "2024" else "Última Leitura", f"{ultima_leitura} m³")
 with col2:
-    st.metric("Data da Última Leitura", data_ultima_leitura)
+    st.metric("Média de Consumo Diário" if ano_selecionado == "2024" else "Data da Última Leitura", data_ultima_leitura)
 with col3:
     st.metric("Média de Consumo Diário", f"{media_consumo:.2f} m³")
 
@@ -121,12 +110,10 @@ st.subheader("Outros Indicadores")
 col1, col2 = st.columns(2)
 with col1:
     st.metric("Dias com Consumo Zero", dias_consumo_zero)
-    st.metric("Menor Consumo", f"{menor_consumo} m³")
-    st.metric("Data do Menor Consumo", data_menor_consumo)
+    st.metric(f"Menor Consumo ({mes_menor_consumo})", f"{menor_consumo} m³")
 
 with col2:
-    st.metric("Maior Consumo", f"{maior_consumo} m³")
-    st.metric("Data do Maior Consumo", data_maior_consumo)
+    st.metric(f"Maior Consumo ({mes_maior_consumo})", f"{maior_consumo} m³")
 
 st.markdown("---")
 
