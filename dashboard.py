@@ -57,9 +57,14 @@ maior_consumo = df["Consumo"].max()
 menor_consumo = df[df["Consumo"] > 0]["Consumo"].min()
 media_consumo = df["Consumo"].mean()
 
-ultima_leitura = df.iloc[-1]["Leitura"]
-data_ultima_leitura = df.iloc[-1]["Data"] + pd.Timedelta(days=1)
-consumo_ultima_leitura = df.iloc[-1]["Consumo"]
+if ano_selecionado == "2025":
+    ultima_leitura = df.iloc[-1]["Leitura"]
+    data_ultima_leitura = df.iloc[-1]["Data"] + pd.Timedelta(days=1)
+    consumo_ultima_leitura = df.iloc[-1]["Consumo"]
+else:
+    consumo_ultima_leitura = df["Consumo"].sum()
+    data_ultima_leitura = "Total 2024"
+    media_consumo = df["Consumo"].mean()
 
 data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].values[0]
 
@@ -76,9 +81,9 @@ st.markdown("---")
 # Criar uma linha com o logo e as métricas
 col1, col2, col3 = st.columns([1, 1, 1])
 with col1:
-    st.metric("Última Leitura", f"{consumo_ultima_leitura if consumo_ultima_leitura is not None else 'Sem Dados'} m³")
+    st.metric("Consumo Total" if ano_selecionado == "2024" else "Última Leitura", f"{consumo_ultima_leitura if consumo_ultima_leitura is not None else 'Sem Dados'} m³")
 with col2:
-    st.metric("Data da Última Leitura", f"{data_ultima_leitura.strftime('%d/%m/%Y') if data_ultima_leitura else 'Sem Dados'}")
+    st.metric("Ano de Referência" if ano_selecionado == "2024" else "Data da Última Leitura", f"{data_ultima_leitura}")
 with col3:
     st.metric("Média de Consumo Diário", f"{media_consumo:.2f} m³")
 
