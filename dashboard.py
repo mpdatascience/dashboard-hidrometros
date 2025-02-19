@@ -68,10 +68,18 @@ else:
     data_ultima_leitura = "Total 2024"
     media_consumo = df["Consumo"].mean()
 
-data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].values[0]
+data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].values
+if len(data_maior_consumo) > 0:
+    data_maior_consumo = pd.to_datetime(data_maior_consumo[0]).strftime('%d/%m/%Y')
+else:
+    data_maior_consumo = "Sem dados"
 
 df_menor_consumo = df[(df["Consumo"] == menor_consumo) & (df["Data"].dt.weekday != 6)]
-data_menor_consumo = df_menor_consumo["Data"].values[0] if not df_menor_consumo.empty else "Sem dados"
+data_menor_consumo = df_menor_consumo["Data"].values
+if len(data_menor_consumo) > 0:
+    data_menor_consumo = pd.to_datetime(data_menor_consumo[0]).strftime('%d/%m/%Y')
+else:
+    data_menor_consumo = "Sem dados"
 
 # Criar layout
 st.image("natura_logo.png", width=200)
@@ -104,11 +112,11 @@ col1, col2 = st.columns(2)
 with col1:
     st.metric("Dias com Consumo Zero", dias_consumo_zero)
     st.metric("Menor Consumo", f"{menor_consumo} m³")
-    st.metric("Data do Menor Consumo", pd.to_datetime(data_menor_consumo).strftime('%d/%m/%Y') if data_menor_consumo != "Sem dados" else "Sem dados")
+    st.metric("Data do Menor Consumo", data_menor_consumo)
 
 with col2:
     st.metric("Maior Consumo", f"{maior_consumo} m³")
-    st.metric("Data do Maior Consumo", pd.to_datetime(data_maior_consumo).strftime('%d/%m/%Y"))
+    st.metric("Data do Maior Consumo", data_maior_consumo)
 
 st.markdown("---")
 
