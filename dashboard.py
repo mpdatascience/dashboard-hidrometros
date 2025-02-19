@@ -60,12 +60,13 @@ menor_consumo = df[df["Consumo"] > 0]["Consumo"].min()
 media_consumo = df["Consumo"].mean()
 
 ultima_leitura = df.iloc[-1]["Leitura"] if not df.empty else "Sem Dados"
+data_ultima_leitura = df.iloc[-1]["Data"].strftime('%d/%m/%Y') if not df.empty else "Sem Dados"
 consumo_atual = df.iloc[-1]["Consumo"] if not df.empty else "Sem Dados"
 
 # Consumo total do mês selecionado a partir da guia "Atual"
 try:
     df_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", header=None)
-    consumo_total_mes = df_atual.iloc[0, 1] if not df_atual.empty else "Sem Dados"
+    consumo_total_mes = df_atual.iloc[1, 1] if not df_atual.empty else "Sem Dados"
 except Exception as e:
     consumo_total_mes = "Sem Dados"
 
@@ -100,7 +101,7 @@ col1, col2, col3 = st.columns([1, 1, 1])
 with col1:
     st.metric("Última Leitura", f"{ultima_leitura} m³")
 with col2:
-    st.metric("Consumo Atual", f"{consumo_atual} m³")
+    st.metric("Data da Última Leitura", data_ultima_leitura)
 with col3:
     st.metric("Consumo Total do Mês", f"{consumo_total_mes} m³")
 
