@@ -60,7 +60,7 @@ menor_consumo = df[df["Consumo"] > 0]["Consumo"].min()
 media_consumo = df["Consumo"].mean()
 
 ultima_leitura = df.iloc[-1]["Leitura"] if not df.empty else "Sem Dados"
-data_ultima_leitura = df.iloc[-1]["Data"].strftime('%d/%m/%Y') if not df.empty else "Sem Dados"
+data_ultima_leitura = (df.iloc[-1]["Data"] + timedelta(days=1)).strftime('%d/%m/%Y') if not df.empty else "Sem Dados"
 consumo_atual = df.iloc[-1]["Consumo"] if not df.empty else "Sem Dados"
 
 # Consumo total do mês selecionado a partir da guia "Atual"
@@ -114,6 +114,7 @@ with col1:
     st.metric("Dias com Consumo Zero", dias_consumo_zero)
     st.metric("Menor Consumo", f"{menor_consumo} m³")
     st.metric("Data do Menor Consumo", data_menor_consumo)
+    st.metric("Média de Consumo Diário", f"{media_consumo:.2f} m³")
 
 with col2:
     st.metric("Maior Consumo", f"{maior_consumo} m³")
