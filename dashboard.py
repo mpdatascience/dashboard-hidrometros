@@ -3,7 +3,6 @@ import pandas as pd
 import plotly.express as px
 import os
 from datetime import datetime, timedelta
-from PIL import Image, ImageDraw, ImageFont
 
 # Definir caminho do arquivo
 st.set_page_config(page_title="Dashboard Hidrometros", layout="wide")
@@ -96,14 +95,6 @@ with col2:
     st.metric("Data do Maior Consumo", pd.to_datetime(data_maior_consumo).strftime('%d/%m/%Y'))
 
 st.markdown("---")
-
-# Adicionar imagem de hidrômetro com consumo sobreposto
-hidrometro_img = Image.open("hidrômetro.png")
-draw = ImageDraw.Draw(hidrometro_img)
-font = ImageFont.load_default()
-text = f"{consumo_ultima_leitura:.2f} m³"
-draw.text((50, 50), text, fill="black", font=font)
-st.image(hidrometro_img, caption="Consumo Atual no Hidrômetro", use_column_width=True)
 
 # Gráfico de consumo diário
 fig = px.line(df, x="Data", y="Consumo", color="Mês", title="Consumo Diário de Água", markers=True,
