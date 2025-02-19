@@ -59,7 +59,7 @@ maior_consumo = df["Consumo"].max()
 menor_consumo = df[df["Consumo"] > 0]["Consumo"].min()
 media_consumo = df["Consumo"].mean()
 
-data_ultima_leitura = datetime.now().date()
+data_ultima_leitura = datetime.now().strftime('%d/%m/%Y')
 if ano_selecionado == "2025":
     ultima_leitura = df.iloc[-1]["Leitura"]
     consumo_ultima_leitura = df.iloc[-1]["Consumo"]
@@ -99,8 +99,7 @@ col1, col2, col3 = st.columns([1, 1, 1])
 with col1:
     st.metric("Consumo Total" if ano_selecionado == "2024" else "Última Leitura", f"{consumo_ultima_leitura if consumo_ultima_leitura is not None else 'Sem Dados'} m³")
 with col2:
-    st.metric("Ano de Referência" if ano_selecionado == "2024" else "Data da Última Leitura", 
-              data_ultima_leitura.strftime('%d/%m/%Y') if isinstance(data_ultima_leitura, datetime) else str(data_ultima_leitura))
+    st.metric("Ano de Referência" if ano_selecionado == "2024" else "Data da Última Leitura", data_ultima_leitura)
 with col3:
     st.metric("Média de Consumo Diário", f"{media_consumo:.2f} m³")
 
