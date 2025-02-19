@@ -4,31 +4,22 @@ import plotly.express as px
 import os
 from datetime import datetime
 
-# Definir configuração da página antes de qualquer outro comando Streamlit
-st.set_page_config(page_title="Dashboard Hidrometros", layout="wide")
-
-# Restante do código...
-
-
 # Definir caminho do arquivo
+st.set_page_config(page_title="Dashboard Hidrometros", layout="wide")
 caminho_arquivo = os.path.join(os.path.dirname(__file__), "LEITURA DE HIDROMETROS.xlsx")
 
-# Gerar a lista de meses para os anos 2024 e 2025
-anos = ["2024", "2025"]
+# Gerar a lista de meses do ano
+anos = ["2024", "2025"]  # Incluir dados de 2024 e 2025
 meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
-planilhas = {ano: [f"{mes} - {ano}" for mes in meses] for ano in anos}
+planilhas = [f"{mes} - {ano}" for ano in anos for mes in meses]
 
-# Criar menu lateral para seleção de ano
-st.sidebar.title("Menu")
-ano_selecionado = st.sidebar.radio("Selecione o Ano", options=anos)
-
-# Identificar o mês atual no ano selecionado
+# Identificar o mês atual
 mes_atual = datetime.now().strftime("%b - %Y")
-mes_atual = next((m for m in planilhas[ano_selecionado] if mes_atual in m), None)
+mes_atual = next((m for m in planilhas if mes_atual in m), None)
 
 # Carregar os dados
 df_list = []
-for sheet in planilhas[ano_selecionado]:
+for sheet in planilhas:
     try:
         temp_df = pd.read_excel(caminho_arquivo, sheet_name=sheet, header=1)
         temp_df["Mês"] = sheet  # Adiciona a coluna do mês
@@ -36,42 +27,74 @@ for sheet in planilhas[ano_selecionado]:
     except ValueError:
         print(f"A planilha {sheet} não foi encontrada no arquivo.")
 
-if df_list:
-    df = pd.concat(df_list, ignore_index=True)
-    df.columns = ["Data", "Leitura", "Consumo", "Status", "Mês"]
-    df.dropna(inplace=True)
+df = pd.concat(df_list, ignore_index=True)
+df.dropna(inplace=True)
 
-    # Converter tipos
-    df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
-    df["Leitura"] = pd.to_numeric(df["Leitura"], errors="coerce")
-    df["Consumo"] = pd.to_numeric(df["Consumo"], errors="coerce")
-    
-    # Calcular indicadores
-    consumo_mes_atual = df[df["Mês"] == mes_atual]["Consumo"].sum()
-    media_consumo = df["Consumo"].mean()
-    dias_consumo_zero = (df["Consumo"] == 0).sum()
-    maior_consumo = df["Consumo"].max()
-    menor_consumo = df[df["Consumo"] > 0]["Consumo"].min()
+# Verificar as colunas reais antes de renomear
+print("Colunas do DataFrame:", df.columns.tolist())
+print(f"O DataFrame tem {len(df.columns)} colunas.")
+
+# Renomear colunas apenas se a quantidade for igual à esperada
+colunas_esperadas = ["Data", "Leitura", "Consumo", "Status", "Mês"]
+if len(df.columns) == len(colunas_esperadas):
+    df.columns = colunas_esperadas
 else:
-    st.error("Não há dados disponíveis para este ano.")
-    st.stop()
+    print("Erro: Quantidade de colunas inesperada. Verifique o arquivo Excel.")
+    print("Colunas encontradas:", df.columns.tolist())
+
+# Converter tipos
+df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
+df["Leitura"] = pd.to_numeric(df["Leitura"], errors="coerce")
+df["Consumo"] = pd.to_numeric(df["Consumo"], errors="coerce")
+
+# Criar um seletor de ano
+ano_selecionado = st.sidebar.radio("Selecione o Ano", ["2024", "2025"])
+df = df[df["Mês"].str.contains(ano_selecionado)]
+
+# Calcular indicadores
+dias_consumo_zero = (df["Consumo"] == 0).sum()
+maior_consumo = df["Consumo"].max()
+menor_consumo = df[df["Consumo"] > 0]["Consumo"].min()
+media_consumo = df["Consumo"].mean()
+
+ultima_leitura = df.iloc[-1]["Leitura"]
+data_ultima_leitura = df.iloc[-1]["Data"] + pd.Timedelta(days=1)
+consumo_ultima_leitura = df.iloc[-1]["Consumo"]
+
+data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].values[0]
+
+# Calcular a data do menor consumo ignorando domingos
+df_menor_consumo = df[(df["Consumo"] == menor_consumo) & (df["Data"].dt.weekday != 6)]
+data_menor_consumo = df_menor_consumo["Data"].values[0] if not df_menor_consumo.empty else "Sem dados"
 
 # Criar layout
-st.set_page_config(page_title="Dashboard Hidrometros", layout="wide")
 st.image("natura_logo.png", width=200)
-st.title(f"Consumo de Água - Simões Filho ({ano_selecionado})")
+st.title("Consumo de Água - Simões Filho")
+
 st.markdown("---")
 
-# Exibir indicadores
-col1, col2, col3 = st.columns(3)
+# Criar uma linha com o logo e as métricas
+col1, col2, col3 = st.columns([1, 1, 1])
 with col1:
-    st.metric("Consumo do Mês Atual", f"{consumo_mes_atual:.2f} m³")
-    st.metric("Média de Consumo Diário", f"{media_consumo:.2f} m³")
+    st.metric("Última Leitura", f"{consumo_ultima_leitura if consumo_ultima_leitura is not None else 'Sem Dados'} m³")
 with col2:
+    st.metric("Data da Última Leitura", f"{data_ultima_leitura.strftime('%d/%m/%Y') if data_ultima_leitura else 'Sem Dados'}")
+with col3:
+    st.metric("Média de Consumo Diário", f"{media_consumo:.2f} m³")
+
+st.markdown("---")
+
+# Exibir indicadores adicionais
+st.subheader("Outros Indicadores")
+col1, col2 = st.columns(2)
+with col1:
     st.metric("Dias com Consumo Zero", dias_consumo_zero)
     st.metric("Menor Consumo", f"{menor_consumo} m³")
-with col3:
+    st.metric("Data do Menor Consumo", pd.to_datetime(data_menor_consumo).strftime('%d/%m/%Y') if data_menor_consumo != "Sem dados" else "Sem dados")
+
+with col2:
     st.metric("Maior Consumo", f"{maior_consumo} m³")
+    st.metric("Data do Maior Consumo", pd.to_datetime(data_maior_consumo).strftime('%d/%m/%Y'))
 
 st.markdown("---")
 
