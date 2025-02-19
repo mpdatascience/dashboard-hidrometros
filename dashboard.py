@@ -62,11 +62,12 @@ media_consumo = df["Consumo"].mean()
 ultima_leitura = df.iloc[-1]["Leitura"] if not df.empty else "Sem Dados"
 consumo_atual = df.iloc[-1]["Consumo"] if not df.empty else "Sem Dados"
 
-# Consumo total do mês selecionado
-consumo_total_mes = "Sem Dados"
-if mes_atual:
-    df_mes_atual = df[df["Mês"].str.contains(mes_atual)]
-    consumo_total_mes = df_mes_atual["Consumo"].sum() if not df_mes_atual.empty else "Sem Dados"
+# Consumo total do mês selecionado a partir da guia "Atual"
+try:
+    df_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", header=None)
+    consumo_total_mes = df_atual.iloc[0, 1] if not df_atual.empty else "Sem Dados"
+except Exception as e:
+    consumo_total_mes = "Sem Dados"
 
 data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].values
 if len(data_maior_consumo) > 0:
