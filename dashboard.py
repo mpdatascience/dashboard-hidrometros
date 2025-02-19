@@ -4,6 +4,12 @@ import plotly.express as px
 import os
 from datetime import datetime
 
+# Definir configuração da página antes de qualquer outro comando Streamlit
+st.set_page_config(page_title="Dashboard Hidrometros", layout="wide")
+
+# Restante do código...
+
+
 # Definir caminho do arquivo
 caminho_arquivo = os.path.join(os.path.dirname(__file__), "LEITURA DE HIDROMETROS.xlsx")
 
