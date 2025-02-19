@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Definir caminho do arquivo
 st.set_page_config(page_title="Dashboard Hidrometros", layout="wide")
@@ -52,7 +52,7 @@ media_consumo = df["Consumo"].mean()
 
 if ano_selecionado == "2025":
     ultima_leitura = df.iloc[-1]["Leitura"]
-    data_ultima_leitura = df.iloc[-1]["Data"].date()
+    data_ultima_leitura = (df.iloc[-1]["Data"] + timedelta(days=1)).date()
     consumo_ultima_leitura = df.iloc[-1]["Consumo"]
 else:
     consumo_ultima_leitura = df["Consumo"].sum()
