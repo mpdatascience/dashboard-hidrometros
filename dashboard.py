@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import os
 from datetime import datetime, timedelta
+from PIL import Image, ImageDraw, ImageFont
 
 # Definir caminho do arquivo
 st.set_page_config(page_title="Dashboard Hidrometros", layout="wide")
@@ -50,9 +51,9 @@ maior_consumo = df["Consumo"].max()
 menor_consumo = df[df["Consumo"] > 0]["Consumo"].min()
 media_consumo = df["Consumo"].mean()
 
+data_ultima_leitura = datetime.now().date()
 if ano_selecionado == "2025":
     ultima_leitura = df.iloc[-1]["Leitura"]
-    data_ultima_leitura = (df.iloc[-1]["Data"] + timedelta(days=1)).date()
     consumo_ultima_leitura = df.iloc[-1]["Consumo"]
 else:
     consumo_ultima_leitura = df["Consumo"].sum()
@@ -66,7 +67,14 @@ data_menor_consumo = df_menor_consumo["Data"].values[0] if not df_menor_consumo.
 
 # Criar layout
 st.image("natura_logo.png", width=200)
-st.title("Consumo de Água - Simões Filho")
+st.markdown(
+    f"""
+    <div style='position: relative; text-align: center;'>
+        <img src="Embasa.png" style="position: absolute; width: 100%; opacity: 0.2; z-index: -1;">
+        <h1 style='color: #004B8D;'>Consumo de Água - Simões Filho</h1>
+    </div>
+    """, unsafe_allow_html=True
+)
 
 st.markdown("---")
 
