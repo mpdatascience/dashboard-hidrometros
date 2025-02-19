@@ -30,17 +30,10 @@ for sheet in planilhas:
 df = pd.concat(df_list, ignore_index=True)
 df.dropna(inplace=True)
 
-# Verificar as colunas reais antes de renomear
-print("Colunas do DataFrame:", df.columns.tolist())
-print(f"O DataFrame tem {len(df.columns)} colunas.")
-
-# Renomear colunas apenas se a quantidade for igual à esperada
+# Renomear colunas
 colunas_esperadas = ["Data", "Leitura", "Consumo", "Status", "Mês"]
 if len(df.columns) == len(colunas_esperadas):
     df.columns = colunas_esperadas
-else:
-    print("Erro: Quantidade de colunas inesperada. Verifique o arquivo Excel.")
-    print("Colunas encontradas:", df.columns.tolist())
 
 # Converter tipos
 df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
@@ -68,7 +61,6 @@ else:
 
 data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].values[0]
 
-# Calcular a data do menor consumo ignorando domingos
 df_menor_consumo = df[(df["Consumo"] == menor_consumo) & (df["Data"].dt.weekday != 6)]
 data_menor_consumo = df_menor_consumo["Data"].values[0] if not df_menor_consumo.empty else "Sem dados"
 
@@ -83,7 +75,8 @@ col1, col2, col3 = st.columns([1, 1, 1])
 with col1:
     st.metric("Consumo Total" if ano_selecionado == "2024" else "Última Leitura", f"{consumo_ultima_leitura if consumo_ultima_leitura is not None else 'Sem Dados'} m³")
 with col2:
-    st.metric("Ano de Referência" if ano_selecionado == "2024" else "Data da Última Leitura", f"{data_ultima_leitura}")
+    st.metric("Ano de Referência" if ano_selecionado == "2024" else "Data da Última Leitura", 
+              data_ultima_leitura.strftime('%Y-%m-%d %H:%M:%S') if isinstance(data_ultima_leitura, pd.Timestamp) else data_ultima_leitura)
 with col3:
     st.metric("Média de Consumo Diário", f"{media_consumo:.2f} m³")
 
