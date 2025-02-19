@@ -84,7 +84,7 @@ with col1:
     st.metric("Consumo Total" if ano_selecionado == "2024" else "Última Leitura", f"{consumo_ultima_leitura if consumo_ultima_leitura is not None else 'Sem Dados'} m³")
 with col2:
     st.metric("Ano de Referência" if ano_selecionado == "2024" else "Data da Última Leitura", 
-              data_ultima_leitura.strftime('%Y-%m-%d') if isinstance(data_ultima_leitura, datetime) else str(data_ultima_leitura))
+              data_ultima_leitura.strftime('%d/%m/%Y') if isinstance(data_ultima_leitura, datetime) else str(data_ultima_leitura))
 with col3:
     st.metric("Média de Consumo Diário", f"{media_consumo:.2f} m³")
 
