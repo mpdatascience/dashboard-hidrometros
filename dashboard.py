@@ -57,17 +57,14 @@ dias_consumo_zero = (df["Consumo"] == 0).sum()
 maior_consumo = df["Consumo"].max()
 menor_consumo = df[df["Consumo"] > 0]["Consumo"].min()
 
-# Consumo total do ano de 2024 e média diária
+# Cálculos para 2024
 if ano_selecionado == "2024":
-    try:
-        df_cd34 = pd.read_excel(caminho_arquivo, sheet_name="Atual", header=None)
-        consumo_total_2024 = df_cd34.iloc[1, 1] if not df_cd34.empty else "Sem Dados"
-        media_diaria_2024 = consumo_total_2024 / 12 if isinstance(consumo_total_2024, (int, float)) else "Sem Dados"
-    except Exception as e:
-        consumo_total_2024 = "Sem Dados"
-        media_diaria_2024 = "Sem Dados"
-
-    # Calcular o mês com menor consumo
+    # Somar o consumo de todos os meses de 2024
+    consumo_total_2024 = df[df["Mês"].str.contains("2024")]["Consumo"].sum()
+    # Calcular a média diária de consumo (considerando 365 dias no ano)
+    media_diaria_2024 = consumo_total_2024 / 365 if consumo_total_2024 else "Sem Dados"
+    
+    # Calcular o mês de maior e menor consumo
     mes_maior_consumo = df[df["Consumo"] == maior_consumo]["Mês"].values[0] if not df[df["Consumo"] == maior_consumo].empty else "Sem dados"
     mes_menor_consumo = df[df["Consumo"] == menor_consumo]["Mês"].values[0] if not df[df["Consumo"] == menor_consumo].empty else "Sem dados"
     
