@@ -1,10 +1,70 @@
-# Cálculos para 2024
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+import os
+from datetime import datetime, timedelta
+from PIL import Image, ImageDraw, ImageFont
+
+# Definir caminho do arquivo
+st.set_page_config(page_title="Dashboard Hidrometros", layout="wide")
+caminho_arquivo = os.path.join(os.path.dirname(__file__), "LEITURA DE HIDROMETROS.xlsx")
+
+# Gerar a lista de meses do ano
+anos = ["2024", "2025"]  # Incluir dados de 2024 e 2025
+meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+planilhas = [f"{mes} - {ano}" for ano in anos for mes in meses]
+
+# Identificar o mês atual
+mes_atual = datetime.now().strftime("%b - %Y")
+mes_atual = next((m for m in planilhas if mes_atual in m), None)
+
+# Carregar os dados
+df_list = []
+for sheet in planilhas:
+    try:
+        temp_df = pd.read_excel(caminho_arquivo, sheet_name=sheet, header=1)
+        temp_df["Mês"] = sheet  # Adiciona a coluna do mês
+        df_list.append(temp_df)
+    except ValueError:
+        print(f"A planilha {sheet} não foi encontrada no arquivo.")
+
+df = pd.concat(df_list, ignore_index=True)
+df.dropna(inplace=True)
+
+# Renomear colunas
+colunas_esperadas = ["Data", "Leitura", "Consumo", "Status", "Mês"]
+if len(df.columns) == len(colunas_esperadas):
+    df.columns = colunas_esperadas
+
+# Converter tipos
+df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
+df["Leitura"] = pd.to_numeric(df["Leitura"], errors="coerce")
+df["Consumo"] = pd.to_numeric(df["Consumo"], errors="coerce")
+
+# Criar um seletor de ano
+ano_selecionado = st.sidebar.radio("Selecione o Ano", ["2024", "2025"])
+
+# Filtrar os dados com base no ano selecionado
+df = df[df["Mês"].str.contains(ano_selecionado)]
+
+# Criar um seletor de comparação de meses
+st.sidebar.subheader("Comparação de Consumo")
+mes1 = st.sidebar.selectbox("Selecione o primeiro mês", meses)
+mes2 = st.sidebar.selectbox("Selecione o segundo mês", meses)
+
+df_mes1 = df[df["Mês"].str.contains(mes1)]
+df_mes2 = df[df["Mês"].str.contains(mes2)]
+
+# Calcular indicadores
+dias_consumo_zero = (df["Consumo"] == 0).sum()
+maior_consumo = df["Consumo"].max()
+menor_consumo = df[df["Consumo"] > 0]["Consumo"].min()
+
+# Consumo total e média diária para 2024
 if ano_selecionado == "2024":
-    # Somar o consumo de todos os meses de 2024
     consumo_total_2024 = df[df["Mês"].str.contains("2024")]["Consumo"].sum()
-    # Calcular a média diária de consumo (considerando 365 dias no ano)
     media_diaria_2024 = consumo_total_2024 / 365 if consumo_total_2024 else "Sem Dados"
-    
+
     # Calcular o mês de maior e menor consumo
     mes_maior_consumo = df[df["Consumo"] == maior_consumo]["Mês"].values[0] if not df[df["Consumo"] == maior_consumo].empty else "Sem dados"
     mes_menor_consumo = df[df["Consumo"] == menor_consumo]["Mês"].values[0] if not df[df["Consumo"] == menor_consumo].empty else "Sem dados"
@@ -15,12 +75,15 @@ else:
     ultima_leitura = df.iloc[-1]["Leitura"] if not df.empty else "Sem Dados"
     data_ultima_leitura = (df.iloc[-1]["Data"] + timedelta(days=1)).strftime('%d/%m/%Y') if not df.empty else "Sem Dados"
     
-    # Para 2025, a média diária de consumo é calculada pela média de todos os consumos até agora
+    # Média de consumo diário para 2025
     total_consumo_2025 = df["Consumo"].sum()  # Somando o total de consumo
     dias_registrados_2025 = len(df)  # Número de registros de consumo
     media_diaria_2025 = total_consumo_2025 / dias_registrados_2025 if dias_registrados_2025 > 0 else "Sem Dados"
 
-# Criar layout
+consumo_atual = df.iloc[-1]["Consumo"] if not df.empty else "Sem Dados"
+media_consumo = df["Consumo"].mean()
+
+# Layout
 st.image("natura_logo.png", width=200)
 st.markdown(
     f"""
