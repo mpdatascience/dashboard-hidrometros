@@ -45,6 +45,14 @@ df["Consumo"] = pd.to_numeric(df["Consumo"], errors="coerce")
 ano_selecionado = st.sidebar.radio("Selecione o Ano", ["2024", "2025"])
 df = df[df["Mês"].str.contains(ano_selecionado)]
 
+# Criar um seletor de comparação de meses
+st.sidebar.subheader("Comparação de Consumo")
+mes1 = st.sidebar.selectbox("Selecione o primeiro mês", meses)
+mes2 = st.sidebar.selectbox("Selecione o segundo mês", meses)
+
+df_mes1 = df[df["Mês"].str.contains(mes1)]
+df_mes2 = df[df["Mês"].str.contains(mes2)]
+
 # Calcular indicadores
 dias_consumo_zero = (df["Consumo"] == 0).sum()
 maior_consumo = df["Consumo"].max()
@@ -100,7 +108,7 @@ with col1:
 
 with col2:
     st.metric("Maior Consumo", f"{maior_consumo} m³")
-    st.metric("Data do Maior Consumo", pd.to_datetime(data_maior_consumo).strftime('%d/%m/%Y'))
+    st.metric("Data do Maior Consumo", pd.to_datetime(data_maior_consumo).strftime('%d/%m/%Y"))
 
 st.markdown("---")
 
