@@ -43,8 +43,6 @@ df["Consumo"] = pd.to_numeric(df["Consumo"], errors="coerce")
 
 # Criar um seletor de ano
 ano_selecionado = st.sidebar.radio("Selecione o Ano", ["2024", "2025"])
-
-# Filtrar os dados com base no ano selecionado
 df = df[df["Mês"].str.contains(ano_selecionado)]
 
 # Criar um seletor de comparação de meses
@@ -59,31 +57,31 @@ df_mes2 = df[df["Mês"].str.contains(mes2)]
 dias_consumo_zero = (df["Consumo"] == 0).sum()
 maior_consumo = df["Consumo"].max()
 menor_consumo = df[df["Consumo"] > 0]["Consumo"].min()
-
-# Consumo total e média diária para 2024
-if ano_selecionado == "2024":
-    consumo_total_2024 = df[df["Mês"].str.contains("2024")]["Consumo"].sum()
-    media_diaria_2024 = consumo_total_2024 / 365 if consumo_total_2024 else "Sem Dados"
-
-    # Calcular o mês de maior e menor consumo
-    mes_maior_consumo = df[df["Consumo"] == maior_consumo]["Mês"].values[0] if not df[df["Consumo"] == maior_consumo].empty else "Sem dados"
-    mes_menor_consumo = df[df["Consumo"] == menor_consumo]["Mês"].values[0] if not df[df["Consumo"] == menor_consumo].empty else "Sem dados"
-    
-    ultima_leitura = consumo_total_2024
-    data_ultima_leitura = f"{media_diaria_2024:.2f} m³" if isinstance(media_diaria_2024, (int, float)) else "Sem Dados"
-else:
-    ultima_leitura = df.iloc[-1]["Leitura"] if not df.empty else "Sem Dados"
-    data_ultima_leitura = (df.iloc[-1]["Data"] + timedelta(days=1)).strftime('%d/%m/%Y') if not df.empty else "Sem Dados"
-    
-    # Média de consumo diário para 2025
-    total_consumo_2025 = df["Consumo"].sum()  # Somando o total de consumo
-    dias_registrados_2025 = len(df)  # Número de registros de consumo
-    media_diaria_2025 = total_consumo_2025 / dias_registrados_2025 if dias_registrados_2025 > 0 else "Sem Dados"
-
-consumo_atual = df.iloc[-1]["Consumo"] if not df.empty else "Sem Dados"
 media_consumo = df["Consumo"].mean()
 
-# Layout
+data_ultima_leitura = datetime.now().date()
+if ano_selecionado == "2025":
+    ultima_leitura = df.iloc[-1]["Leitura"]
+    consumo_ultima_leitura = df.iloc[-1]["Consumo"]
+else:
+    consumo_ultima_leitura = df["Consumo"].sum()
+    data_ultima_leitura = "Total 2024"
+    media_consumo = df["Consumo"].mean()
+
+data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].values
+if len(data_maior_consumo) > 0:
+    data_maior_consumo = pd.to_datetime(data_maior_consumo[0]).strftime('%d/%m/%Y')
+else:
+    data_maior_consumo = "Sem dados"
+
+df_menor_consumo = df[(df["Consumo"] == menor_consumo) & (df["Data"].dt.weekday != 6)]
+data_menor_consumo = df_menor_consumo["Data"].values
+if len(data_menor_consumo) > 0:
+    data_menor_consumo = pd.to_datetime(data_menor_consumo[0]).strftime('%d/%m/%Y')
+else:
+    data_menor_consumo = "Sem dados"
+
+# Criar layout
 st.image("natura_logo.png", width=200)
 st.markdown(
     f"""
@@ -99,15 +97,10 @@ st.markdown("---")
 # Criar uma linha com o logo e as métricas
 col1, col2, col3 = st.columns([1, 1, 1])
 with col1:
-    if ano_selecionado == "2024":
-        st.metric("Consumo do Ano", f"{consumo_total_2024} m³")
-    else:
-        st.metric("Última Leitura", f"{ultima_leitura} m³")
+    st.metric("Consumo Total" if ano_selecionado == "2024" else "Última Leitura", f"{consumo_ultima_leitura if consumo_ultima_leitura is not None else 'Sem Dados'} m³")
 with col2:
-    if ano_selecionado == "2024":
-        st.metric("Média Diária de Consumo", f"{media_diaria_2024:.2f} m³")
-    else:
-        st.metric("Média Diária de Consumo", f"{media_diaria_2025:.2f} m³")
+    st.metric("Ano de Referência" if ano_selecionado == "2024" else "Data da Última Leitura", 
+              data_ultima_leitura.strftime('%d/%m/%Y') if isinstance(data_ultima_leitura, datetime) else str(data_ultima_leitura))
 with col3:
     st.metric("Média de Consumo Diário", f"{media_consumo:.2f} m³")
 
@@ -118,16 +111,12 @@ st.subheader("Outros Indicadores")
 col1, col2 = st.columns(2)
 with col1:
     st.metric("Dias com Consumo Zero", dias_consumo_zero)
-    if ano_selecionado == "2024":
-        st.metric(f"Menor Consumo ({mes_menor_consumo})", f"{menor_consumo} m³")
-    else:
-        st.metric(f"Último Consumo", f"{consumo_atual} m³")
+    st.metric("Menor Consumo", f"{menor_consumo} m³")
+    st.metric("Data do Menor Consumo", data_menor_consumo)
 
 with col2:
-    if ano_selecionado == "2024":
-        st.metric(f"Maior Consumo ({mes_maior_consumo})", f"{maior_consumo} m³")
-    else:
-        st.metric(f"Média de Consumo Diário", f"{media_consumo:.2f} m³")
+    st.metric("Maior Consumo", f"{maior_consumo} m³")
+    st.metric("Data do Maior Consumo", data_maior_consumo)
 
 st.markdown("---")
 
