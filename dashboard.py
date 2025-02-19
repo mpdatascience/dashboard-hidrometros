@@ -70,6 +70,15 @@ try:
 except Exception as e:
     consumo_total_mes = "Sem Dados"
 
+# Para o ano de 2024, definir a última leitura de Dez-2024
+if ano_selecionado == "2024":
+    try:
+        df_dez_2024 = pd.read_excel(caminho_arquivo, sheet_name="Dez - 2024", header=1)
+        ultima_leitura = df_dez_2024.iloc[-1]["Leitura"] if not df_dez_2024.empty else "Sem Dados"
+        media_consumo = df["Consumo"].mean()
+    except Exception as e:
+        ultima_leitura = "Sem Dados"
+
 data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].values
 if len(data_maior_consumo) > 0:
     data_maior_consumo = pd.to_datetime(data_maior_consumo[0]).strftime('%d/%m/%Y')
@@ -103,7 +112,7 @@ with col1:
 with col2:
     st.metric("Data da Última Leitura", data_ultima_leitura)
 with col3:
-    st.metric("Consumo Total do Mês", f"{consumo_total_mes} m³")
+    st.metric("Média de Consumo Diário", f"{media_consumo:.2f} m³")
 
 st.markdown("---")
 
@@ -114,7 +123,6 @@ with col1:
     st.metric("Dias com Consumo Zero", dias_consumo_zero)
     st.metric("Menor Consumo", f"{menor_consumo} m³")
     st.metric("Data do Menor Consumo", data_menor_consumo)
-    st.metric("Média de Consumo Diário", f"{media_consumo:.2f} m³")
 
 with col2:
     st.metric("Maior Consumo", f"{maior_consumo} m³")
