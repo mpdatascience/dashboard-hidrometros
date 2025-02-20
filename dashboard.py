@@ -58,7 +58,7 @@ maior_consumo = df["Consumo"].max()
 menor_consumo = df[df["Consumo"] > 0]["Consumo"].min()
 media_consumo = df["Consumo"].mean()
 
-data_ultima_leitura = (df.iloc[-1]["Data"] + timedelta(days=1)).strftime('%d/%m/%Y') if not df.empty else "Sem dados"
+data_ultima_leitura = (df.iloc[-1]["Data"] + timedelta(days=0)).strftime('%d/%m/%Y') if not df.empty else "Sem dados"
 data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].min().strftime('%d/%m/%Y') if not df.empty else "Sem dados"
 data_menor_consumo = df[df["Consumo"] == menor_consumo]["Data"].min().strftime('%d/%m/%Y') if not df.empty else "Sem dados"
 
