@@ -56,9 +56,16 @@ dias_consumo_zero = (df["Consumo"] == 0).sum()
 maior_consumo = df["Consumo"].max()
 menor_consumo = df[df["Consumo"] > 0]["Consumo"].min()
 media_consumo = df["Consumo"].mean()
+
 data_ultima_leitura = (df.iloc[-1]["Data"] + timedelta(days=1)).strftime('%d/%m/%Y') if not df.empty else "Sem dados"
 data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].min().strftime('%d/%m/%Y') if not df.empty else "Sem dados"
 data_menor_consumo = df[df["Consumo"] == menor_consumo]["Data"].min().strftime('%d/%m/%Y') if not df.empty else "Sem dados"
+
+if ano_selecionado == "2024":
+    consumo_total_atual = df["Consumo"].sum()
+    ultima_leitura_dezembro = df[df["Mês"] == "Dez - 2024"]
+    if not ultima_leitura_dezembro.empty:
+        data_ultima_leitura = (ultima_leitura_dezembro.iloc[-1]["Data"] + timedelta(days=1)).strftime('%d/%m/%Y')
 
 # Criar layout
 st.image("natura_logo.png", width=200)
