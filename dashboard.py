@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from PIL import Image
 
 # Definir caminho do arquivo
@@ -56,7 +56,9 @@ dias_consumo_zero = (df["Consumo"] == 0).sum()
 maior_consumo = df["Consumo"].max()
 menor_consumo = df[df["Consumo"] > 0]["Consumo"].min()
 media_consumo = df["Consumo"].mean()
-data_ultima_leitura = df.iloc[-1]["Data"].strftime('%d/%m/%Y') if not df.empty else "Sem dados"
+data_ultima_leitura = (df.iloc[-1]["Data"] + timedelta(days=1)).strftime('%d/%m/%Y') if not df.empty else "Sem dados"
+data_maior_consumo = df[df["Consumo"] == maior_consumo]["Data"].min().strftime('%d/%m/%Y') if not df.empty else "Sem dados"
+data_menor_consumo = df[df["Consumo"] == menor_consumo]["Data"].min().strftime('%d/%m/%Y') if not df.empty else "Sem dados"
 
 # Criar layout
 st.image("natura_logo.png", width=200)
@@ -89,8 +91,10 @@ col1, col2 = st.columns(2)
 with col1:
     st.metric("Dias com Consumo Zero", dias_consumo_zero)
     st.metric("Menor Consumo", f"{menor_consumo} m³")
+    st.metric("Data do Menor Consumo", data_menor_consumo)
 with col2:
     st.metric("Maior Consumo", f"{maior_consumo} m³")
+    st.metric("Data do Maior Consumo", data_maior_consumo)
 
 st.markdown("---")
 
