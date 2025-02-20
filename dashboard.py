@@ -66,7 +66,7 @@ if ano_selecionado == "2024":
     consumo_total_atual = df["Consumo"].sum()
     ultima_leitura_dezembro = df[df["Mês"] == "Dez - 2024"]
     if not ultima_leitura_dezembro.empty:
-        data_ultima_leitura = (ultima_leitura_dezembro.iloc[-1]["Data"] + timedelta(days=1)).strftime('%d/%m/%Y')
+        data_ultima_leitura = (ultima_leitura_dezembro.iloc[-1]["Data"] + timedelta(days=0)).strftime('%d/%m/%Y')
 
 # Criar layout
 st.image("natura_logo.png", width=200)
