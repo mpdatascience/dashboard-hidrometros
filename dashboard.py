@@ -5,8 +5,8 @@ import os
 from datetime import datetime, timedelta
 from PIL import Image
 
-# Definir caminho do arquivo
 st.image("natura_logo.png", width=200)
+# Definir caminho do arquivo
 st.set_page_config(page_title="Dashboard Hidrometros", layout="wide")
 caminho_arquivo = os.path.join(os.path.dirname(__file__), "LEITURA DE HIDROMETROS.xlsx")
 
