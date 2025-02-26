@@ -46,6 +46,22 @@ df["Consumo"] = pd.to_numeric(df["Consumo"], errors="coerce")
 ano_selecionado = st.sidebar.radio("Selecione o Ano", ["2024", "2025"])
 df = df[df["Mês"].str.contains(ano_selecionado)]
 
+# Criar um seletor de meses
+dados = {
+    "Mês": ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+    "Consumo": [100, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220]
+}
+df = pd.DataFrame(dados)
+
+# Criar um seletor de meses
+mes_selecionado = st.sidebar.radio("Selecione o Mês", df["Mês"].unique())
+
+# Filtrar os dados pelo mês selecionado
+df_filtrado = df[df["Mês"] == mes_selecionado]
+
+# Exibir os dados filtrados
+st.write("Dados do mês selecionado:", df_filtrado)
+
 # Carregar consumo total da guia "Atual"
 try:
     consumo_total_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", header=None).iloc[1, 1]
