@@ -48,7 +48,7 @@ df = df[df["Mês"].str.contains(ano_selecionado)]
 
 # Carregar consumo total da guia "Atual"
 try:
-    consumo_total_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", header=None).iloc[2, 1]
+    consumo_total_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", header=None).iloc[1, 2]
 except Exception as e:
     consumo_total_atual = "Erro ao carregar"
 
