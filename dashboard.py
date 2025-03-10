@@ -46,6 +46,19 @@ df["Consumo"] = pd.to_numeric(df["Consumo"], errors="coerce")
 ano_selecionado = st.sidebar.radio("Selecione o Ano", ["2024", "2025"])
 df = df[df["Mês"].str.contains(ano_selecionado)]
 
+# Criar um seletor de mês baseado no ano escolhido
+meses_disponiveis = [m.split(" - ")[0] for m in planilhas if ano_selecionado in m]
+mes_selecionado = st.sidebar.selectbox("Selecione o Mês", meses_disponiveis)
+
+# Filtrar os dados pelo mês selecionado
+df = df[df["Mês"] == f"{mes_selecionado} - {ano_selecionado}"]
+
+# Gráfico de barras para o consumo diário
+fig = px.bar(df, x="Data", y="Consumo", title=f"Consumo Diário - {mes_selecionado}/{ano_selecionado}",
+             labels={"Consumo": "Consumo (m³)", "Data": "Dia"}, color_discrete_sequence=["#004B8D"])
+st.plotly_chart(fig)
+
+
 # Carregar consumo total da guia "Atual"
 try:
     consumo_total_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", header=None).iloc[1, 2]
