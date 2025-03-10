@@ -113,23 +113,32 @@ with col2:
 
 st.markdown("---")
 
-# Criar gráfico de barras com rótulos
+# Criar gráfico de barras interativo
 fig = px.bar(
     df, x="Data", y="Consumo", 
     title=f"Consumo Diário - {mes_selecionado}/{ano_selecionado}",
     labels={"Data": "Data", "Consumo": "Consumo de Água (m³)"},
-    text_auto=True,  # Exibe os valores sobre as barras
-    color_discrete_sequence=["#004B8D"]
+    text_auto=True,  # Exibe os valores automaticamente
+    color="Consumo",  # Deixa o gráfico colorido conforme os valores
+    color_continuous_scale="Blues"  # Escolhe um gradiente de cores
 )
 
-# Ajustar layout para melhor visualização
-fig.update_traces(textfont_size=12, textposition="outside")  # Ajusta a posição dos rótulos
+# Melhorar interatividade e visual
+fig.update_traces(
+    textfont_size=12, textposition="outside",
+    marker=dict(line=dict(width=0.5, color="black"))  # Bordas finas para destacar barras
+)
+
 fig.update_layout(
-    xaxis_title="Dia",
+    xaxis_title="Data",
     yaxis_title="Consumo de Água (m³)",
-    xaxis=dict(tickformat="%d/%m"),  # Formato das datas no eixo X
-    uniformtext_minsize=10,
-    uniformtext_mode="hide"
+    xaxis=dict(tickformat="%d/%m"),  # Formato de data simplificado
+    hovermode="x unified",  # Tooltip dinâmica ao passar o mouse
+    margin=dict(l=40, r=40, t=40, b=40),  # Ajuste de margens
+    plot_bgcolor="rgba(0,0,0,0)",  # Fundo transparente
+    paper_bgcolor="rgba(0,0,0,0)",  # Fundo transparente
+    coloraxis_showscale=False  # Oculta a barra de cores
 )
 
-st.plotly_chart(fig)
+# Exibir gráfico no Streamlit
+st.plotly_chart(fig, use_container_width=True)
