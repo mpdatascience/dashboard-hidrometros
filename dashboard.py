@@ -113,8 +113,23 @@ with col2:
 
 st.markdown("---")
 
-# Gráfico de consumo diário
-# Gráfico de barras para o consumo diário
-fig = px.bar(df, x="Data", y="Consumo", title=f"Consumo Diário - {mes_selecionado}/{ano_selecionado}",
-             labels={"Consumo": "Consumo (m³)", "Data": "Dia"}, color_discrete_sequence=["#004B8D"])
+# Criar gráfico de barras com rótulos
+fig = px.bar(
+    df, x="Data", y="Consumo", 
+    title=f"Consumo Diário - {mes_selecionado}/{ano_selecionado}",
+    labels={"Data": "Data", "Consumo": "Consumo de Água (m³)"},
+    text_auto=True,  # Exibe os valores sobre as barras
+    color_discrete_sequence=["#004B8D"]
+)
+
+# Ajustar layout para melhor visualização
+fig.update_traces(textfont_size=12, textposition="outside")  # Ajusta a posição dos rótulos
+fig.update_layout(
+    xaxis_title="Dia",
+    yaxis_title="Consumo de Água (m³)",
+    xaxis=dict(tickformat="%d/%m"),  # Formato das datas no eixo X
+    uniformtext_minsize=10,
+    uniformtext_mode="hide"
+)
+
 st.plotly_chart(fig)
