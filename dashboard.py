@@ -1,9 +1,12 @@
 import streamlit as st
+import io
+import sqlite3
 import pandas as pd
 import plotly.express as px
 import os
 from datetime import datetime, timedelta
 from PIL import Image
+
 
 #st.image("natura_logo.png", width=200)
 # Definir caminho do arquivo
@@ -53,9 +56,32 @@ mes_selecionado = st.sidebar.selectbox("Selecione o Mês", meses_disponiveis)
 # Filtrar os dados pelo mês selecionado
 df = df[df["Mês"] == f"{mes_selecionado} - {ano_selecionado}"]
 
-# Carregar consumo total da guia "Atual"
 # Calcula o consumo total do mês ignorando valores negativos
 consumo_total_atual = df.loc[df["Consumo"] > 0, "Consumo"].sum()
+
+# Criar botão para baixar a planilha do mês
+if not df.empty:
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+        df.to_excel(writer, sheet_name="Consumo", index=False)
+    st.download_button(
+        label="Baixar Planilha do Mês",
+        data=output.getvalue(),
+        file_name=f"Consumo_{mes_selecionado}.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
+# Criar botão para baixar a planilha geral
+output_total = io.BytesIO()
+with pd.ExcelWriter(output_total, engine="xlsxwriter") as writer:
+    df.to_excel(writer, sheet_name="Geral", index=False)
+
+st.download_button(
+    label="Baixar Planilha Geral",
+    data=output_total.getvalue(),
+    file_name="Consumo_Geral.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+)
 
 # Calcular indicadores
 dias_consumo_zero = (df["Consumo"] == 0).sum()
