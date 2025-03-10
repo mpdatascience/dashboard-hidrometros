@@ -2,6 +2,7 @@ import streamlit as st
 import io
 import sqlite3
 import pandas as pd
+from io import BytesIO
 import plotly.express as px
 import xlsxwriter
 import os
@@ -63,7 +64,7 @@ consumo_total_atual = df.loc[df["Consumo"] > 0, "Consumo"].sum()
 # Criar botão para baixar a planilha do mês
 if not df.empty:
     output = io.BytesIO()
-    with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+    with pd.ExcelWriter(output, engine="openpyxl") as writer:
         df.to_excel(writer, sheet_name="Consumo", index=False)
     st.download_button(
         label="Baixar Planilha do Mês",
@@ -74,7 +75,7 @@ if not df.empty:
 
 # Criar botão para baixar a planilha geral
 output_total = io.BytesIO()
-with pd.ExcelWriter(output_total, engine="xlsxwriter") as writer:
+with pd.ExcelWriter(output_total, engine="openpyxl") as writer:
     df.to_excel(writer, sheet_name="Geral", index=False)
 
 st.download_button(
