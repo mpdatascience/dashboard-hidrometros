@@ -53,12 +53,6 @@ mes_selecionado = st.sidebar.selectbox("Selecione o Mês", meses_disponiveis)
 # Filtrar os dados pelo mês selecionado
 df = df[df["Mês"] == f"{mes_selecionado} - {ano_selecionado}"]
 
-# Gráfico de barras para o consumo diário
-fig = px.bar(df, x="Data", y="Consumo", title=f"Consumo Diário - {mes_selecionado}/{ano_selecionado}",
-             labels={"Consumo": "Consumo (m³)", "Data": "Dia"}, color_discrete_sequence=["#004B8D"])
-st.plotly_chart(fig)
-
-
 # Carregar consumo total da guia "Atual"
 try:
     consumo_total_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", header=None).iloc[1, 2]
@@ -120,5 +114,7 @@ with col2:
 st.markdown("---")
 
 # Gráfico de consumo diário
-fig = px.line(df, x="Data", y="Consumo", color="Mês", title="Consumo Diário de Água", markers=True)
+# Gráfico de barras para o consumo diário
+fig = px.bar(df, x="Data", y="Consumo", title=f"Consumo Diário - {mes_selecionado}/{ano_selecionado}",
+             labels={"Consumo": "Consumo (m³)", "Data": "Dia"}, color_discrete_sequence=["#004B8D"])
 st.plotly_chart(fig)
