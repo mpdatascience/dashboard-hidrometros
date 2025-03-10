@@ -3,6 +3,7 @@ import io
 import sqlite3
 import pandas as pd
 import plotly.express as px
+import xlsxwriter
 import os
 from datetime import datetime, timedelta
 from PIL import Image
