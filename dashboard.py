@@ -54,10 +54,8 @@ mes_selecionado = st.sidebar.selectbox("Selecione o Mês", meses_disponiveis)
 df = df[df["Mês"] == f"{mes_selecionado} - {ano_selecionado}"]
 
 # Carregar consumo total da guia "Atual"
-try:
-    consumo_total_atual = pd.read_excel(caminho_arquivo, sheet_name="Atual", header=None).iloc[1, 2]
-except Exception as e:
-    consumo_total_atual = "Erro ao carregar"
+# Calcula o consumo total do mês ignorando valores negativos
+consumo_total_atual = df.loc[df["Consumo"] > 0, "Consumo"].sum()
 
 # Calcular indicadores
 dias_consumo_zero = (df["Consumo"] == 0).sum()
